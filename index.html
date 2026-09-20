@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D MODEL PREVIEW — Minecraft Mod (1.21.4)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mc-green:        #6fbf44;
+    --mc-green-dark:   #4c8a2f;
+    --mc-green-light:  #a7e06a;
+    --mc-dirt:         #7a4f2c;
+    --mc-dirt-dark:    #5c3a20;
+    --mc-dirt-light:   #936439;
+    --mc-stone:        #8a8a8a;
+    --mc-stone-dark:   #4f4f4f;
+    --mc-stone-light:  #c9c9c9;
+    --mc-panel:        #201d2b;
+    --mc-dark:         #14131a;
+    --px-dirt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%237a4f2c'/%3E%3Crect x='0' y='0' width='2' height='2' fill='%23865a32'/%3E%3Crect x='3' y='1' width='3' height='2' fill='%236b4223'/%3E%3Crect x='6' y='0' width='2' height='2' fill='%23865a32'/%3E%3Crect x='1' y='3' width='2' height='2' fill='%23865a32'/%3E%3Crect x='4' y='3' width='3' height='2' fill='%236b4223'/%3E%3Crect x='0' y='5' width='2' height='3' fill='%23916337'/%3E%3Crect x='3' y='6' width='2' height='2' fill='%237a4f2c'/%3E%3Crect x='6' y='6' width='2' height='2' fill='%23865a32'/%3E%3C/svg%3E");
+    --px-grass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Crect width='16' height='16' fill='%236b4423'/%3E%3Crect width='16' height='5' fill='%237cbd4b'/%3E%3Crect y='4' width='16' height='1' fill='%235c8f38'/%3E%3Crect x='0' y='6' width='2' height='2' fill='%237a4f2c'/%3E%3Crect x='4' y='7' width='3' height='2' fill='%23865a32'/%3E%3Crect x='9' y='6' width='3' height='2' fill='%235e3a20'/%3E%3Crect x='12' y='8' width='2' height='3' fill='%237a4f2c'/%3E%3Crect x='0' y='10' width='3' height='2' fill='%23865a32'/%3E%3Crect x='6' y='11' width='2' height='2' fill='%236b4223'/%3E%3Crect x='10' y='13' width='3' height='2' fill='%237a4f2c'/%3E%3C/svg%3E");
+    --px-purple: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Crect width='16' height='16' fill='%2323133d'/%3E%3Crect x='0' y='0' width='4' height='3' fill='%234a2a7e'/%3E%3Crect x='6' y='1' width='3' height='3' fill='%235f3a9e'/%3E%3Crect x='11' y='2' width='3' height='2' fill='%23764fd0'/%3E%3Crect x='2' y='5' width='3' height='2' fill='%23764fd0'/%3E%3Crect x='8' y='6' width='4' height='3' fill='%234a2a7e'/%3E%3Crect x='0' y='9' width='2' height='3' fill='%235f3a9e'/%3E%3Crect x='5' y='10' width='3' height='2' fill='%23764fd0'/%3E%3Crect x='10' y='11' width='4' height='3' fill='%234a2a7e'/%3E%3Crect x='3' y='13' width='3' height='2' fill='%235f3a9e'/%3E%3C/svg%3E");
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--mc-dark); font-family: 'VT323', monospace; color: #efeaff; }
+  body {
+    background:
+      linear-gradient(rgba(15, 14, 20, .92), rgba(15, 14, 20, .92)),
+      var(--px-dirt);
+    background-size: cover, 8px 8px;
+    image-rendering: pixelated;
+    font-size: 19px;
+  }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-thumb { background: #4a2f60; border: 2px solid #000; }
+  ::-webkit-scrollbar-track { background: #191624; }
+
+  button, input, select { font-family: inherit; }
+
+  nav {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: center; gap: 18px;
+    padding: 10px 18px;
+    background:
+      linear-gradient(rgba(30, 26, 46, .94), rgba(30, 26, 46, .94)),
+      var(--px-dirt);
+    background-size: cover, 8px 8px;
+    border-bottom: 2px solid #000;
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,.45), 0 2px 0 #7cbd4b;
+  }
+  nav .logo { display: flex; align-items: center; gap: 10px; }
+  nav .logo .block {
+    width: 14px; height: 14px; display: inline-block;
+    background: var(--px-grass); background-size: 14px 14px;
+    border: 1px solid #000; image-rendering: pixelated;
+  }
+  nav .logo span { font-size: 11px; letter-spacing: 1px; color: #d9ffe0; text-shadow: 2px 2px 0 #000; }
+  nav a {
+    color: #cfc4ee; text-decoration: none; font-size: 16px; padding: 2px 8px;
+    border: 2px solid transparent;
+  }
+  nav a:hover { color: #fff; border-color: #2a2440; background: #232038; }
+  nav .spacer { flex: 1; }
+
+  .mc-border {
+    border: 2px solid #000;
+    box-shadow: inset 3px 3px 0 rgba(255,255,255,.18), inset -3px -3px 0 rgba(0,0,0,.45);
+  }
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px; line-height: 1.4; letter-spacing: 1px; text-transform: uppercase;
+    color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,.65);
+    background: #6a6a6a;
+    border: 2px solid #000; border-radius: 0 !important;
+    box-shadow: inset 3px 3px 0 #cfcccc, inset -4px -6px 0 #3a3a3a;
+    padding: 12px 16px; cursor: pointer; image-rendering: pixelated;
+    transition: filter .12s;
+  }
+  .btn:hover { filter: brightness(1.18); }
+  .btn:active { box-shadow: inset 3px 3px 0 #3a3a3a, inset -3px -3px 0 #cfcccc; }
+  .btn.green {
+    background: #4c9c30;
+    box-shadow: inset 3px 3px 0 #a3e06a, inset -4px -6px 0 #2f6a1c;
+  }
+  .btn.purple {
+    background: #6a3ab5;
+    box-shadow: inset 3px 3px 0 #b28ae6, inset -4px -6px 0 #3d1f6e;
+  }
+  .btn.tiny { font-size: 8px; padding: 7px 9px; box-shadow: inset 2px 2px 0 #cfcccc, inset -2px -3px 0 #3a3a3a; }
+  .btn.tiny.green { box-shadow: inset 2px 2px 0 #a3e06a, inset -2px -3px 0 #2f6a1c; }
+  .btn.tiny.danger { background: #a03a4a; box-shadow: inset 2px 2px 0 #e08a9a, inset -2px -3px 0 #5c1f28; }
+  .btn.tiny.danger:hover { filter: brightness(1.18); }
+
+  .hero {
+    position: relative;
+    padding: 30px 20px 26px;
+    background:
+      linear-gradient(rgba(20, 16, 36, .82), rgba(20, 16, 36, .86)),
+      var(--px-dirt);
+    background-size: cover, 8px 8px;
+    border-bottom: 2px solid #000;
+    box-shadow: inset 0 -4px 0 #4c8a2f;
+  }
+  .hero .topbar { max-width: 1080px; margin: 0 auto; }
+  .hero .badge {
+    display: inline-block; font-family: 'Press Start 2P', monospace;
+    font-size: 9px; letter-spacing: 2px; color: #1c3a10;
+    background: var(--px-grass); background-size: 10px 10px;
+    border: 2px solid #000; padding: 6px 10px; margin-bottom: 14px;
+    box-shadow: inset 2px 2px 0 #fff9, inset -2px -3px 0 #0008;
+  }
+  .hero .row { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; }
+  .hero .icon {
+    width: 84px; height: 84px; flex: none;
+    background: #23133d; background-image: var(--px-purple); background-size: 84px 84px;
+    border: 3px solid #000; box-shadow: inset 4px 4px 0 #ffffff22, inset -4px -4px 0 #0006;
+    image-rendering: pixelated;
+  }
+  .hero h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(20px, 4.4vw, 34px);
+    color: #e6ffd9; text-shadow: 4px 4px 0 #2f6a1c;
+    letter-spacing: 1px; margin-bottom: 10px;
+  }
+  .hero .subtitle { color: #c6a8f2; font-size: 21px; margin-bottom: 12px; text-shadow: 2px 2px 0 #000; }
+  .hero .stats { display: flex; gap: 22px; margin-top: 16px; flex-wrap: wrap; }
+  .hero .stat .n { font-family: 'Press Start 2P', monospace; font-size: 12px; color: #a3e06a; text-shadow: 2px 2px 0 #000; }
+  .hero .stat .l { font-size: 13px; color: #8f87ad; letter-spacing: 2px; text-transform: uppercase; }
+  .hero .actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+
+  #lab {
+    max-width: 1120px; margin: 26px auto 14px; padding: 0 12px;
+  }
+  .labhead { display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px; flex-wrap: wrap; }
+  .labhead h2 {
+    font-family: 'Press Start 2P', monospace; font-size: 13px; color: #d9ffe0;
+    text-shadow: 3px 3px 0 #2f6a1c; letter-spacing: 1px;
+  }
+  .labhead .y {
+    font-family: 'Press Start 2P', monospace; font-size: 8px; color: #e6b8ff;
+    background: #3a2560; border: 2px solid #000; padding: 5px 8px;
+    box-shadow: inset 2px 2px 0 #6a4a9e, inset -2px -3px 0 #1f1240;
+  }
+  .labhead .hint { color: #8f87ad; font-size: 16px; }
+
+  .labwrap {
+    position: relative; height: min(70vh, 820px); min-height: 460px;
+    background: #0a0712;
+    border: 2px solid #000;
+    box-shadow: inset 3px 3px 0 rgba(255,255,255,.07), inset -3px -3px 0 rgba(0,0,0,.6), 8px 8px 0 rgba(0,0,0,.35);
+    overflow: hidden;
+    touch-action: none;
+  }
+  .labwrap:fullscreen {
+    border: 0; box-shadow: none;
+    width: 100vw; height: 100vh; min-height: 100vh;
+  }
+  .labwrap canvas { position: absolute; inset: 0; display: block; }
+  .labbar {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 5;
+    display: flex; align-items: center; gap: 12px; padding: 7px 12px; pointer-events: none;
+  }
+  .labbar .zb {
+    display: inline-block; width: 10px; height: 10px; background: #a03a4a;
+    border: 2px solid #000; box-shadow: inset 1px 1px 0 #ffa0b0, inset -1px -1px 0 #4a121c;
+  }
+  .labbar .zc {
+    display: inline-block; width: 10px; height: 10px; background: #6fbf44;
+    border: 2px solid #000; box-shadow: inset 1px 1px 0 #e0ffb0, inset -1px -1px 0 #2f6a1c;
+  }
+  .labbar .title { font-family: 'Press Start 2P', monospace; font-size: 8px; color: #cfc4ee; text-shadow: 2px 2px 0 #000; }
+  .labbar .tip { color: #8f87ad; font-size: 14px; margin-left: auto; }
+  .labbar .winbtn {
+    pointer-events: auto; font-family: 'Press Start 2P', monospace; font-size: 8px;
+    color: #fff; background: #6a6a6a; border: 2px solid #000; padding: 5px 8px; cursor: pointer;
+    box-shadow: inset 2px 2px 0 #cfcccc, inset -2px -3px 0 #3a3a3a;
+  }
+  .labbar .winbtn:hover { filter: brightness(1.2); }
+  .labbar .winbtn.fs { background: #2f5a1c; box-shadow: inset 2px 2px 0 #6ab04a, inset -2px -3px 0 #17310a; }
+
+  #panel {
+    position: absolute; top: 0; bottom: 0; right: 0; z-index: 10;
+    width: 342px; min-width: 260px;
+    transform: translateX(0);
+    transition: transform .28s ease;
+    background:
+      linear-gradient(rgba(24, 20, 36, .96), rgba(24, 20, 36, .96)),
+      var(--px-dirt);
+    background-size: cover, 8px 8px;
+    border-left: 2px solid #000;
+    box-shadow: inset 3px 0 0 rgba(255,255,255,.07), inset -3px 0 0 rgba(0,0,0,.4);
+    overflow-y: auto; overflow-x: hidden; padding: 16px 14px 60px; color: #efeaff;
+    touch-action: auto;
+  }
+  #panel.hidden { transform: translateX(calc(100% + 12px)); }
+  .panelresize {
+    position: absolute; left: -6px; top: 0; bottom: 0; width: 12px; z-index: 12;
+    cursor: ew-resize; touch-action: none;
+  }
+  #panel h1 {
+    font-family: 'Press Start 2P', monospace; font-size: 12px; letter-spacing: 1px;
+    color: #e6b8ff; text-shadow: 3px 3px 0 #3a2560; margin-bottom: 8px;
+    padding: 6px 8px;
+    background: #2a1f45; border: 2px solid #000;
+    box-shadow: inset 2px 2px 0 #423070, 0 2px 0 #7a4f2c;
+  }
+  #panel h2 {
+    font-family: 'Press Start 2P', monospace; font-size: 8px; letter-spacing: 1px;
+    color: #a3e06a; background: #1c2c16; border: 2px solid #000;
+    padding: 6px 8px; margin: 16px 0 8px; text-shadow: 2px 2px 0 #000;
+  }
+  label { display: block; font-size: 15px; margin: 6px 0 2px; color: #c6a8f2; }
+  input[type=text], input[type=number] {
+    width: 100%; background: #12101c; color: #efeaff; font-size: 17px;
+    border: 2px solid #000; border-radius: 0;
+    box-shadow: inset 2px 2px 0 #000, 0 0 0 1px #3a2f5a; padding: 6px 9px; outline: none;
+  }
+  input[type=text]:focus, input[type=number]:focus { box-shadow: 0 0 0 2px #6a3ab5; }
+  input[type=color] {
+    width: 100%; height: 30px; background: #12101c; border: 2px solid #000;
+    border-radius: 0; box-shadow: 0 0 0 1px #3a2f5a; padding: 2px; cursor: pointer;
+  }
+  input[type=range] { width: 100%; accent-color: #6fbf44; }
+  input[type=checkbox] { accent-color: #6fbf44; transform: scale(1.3); margin-right: 8px; }
+  .row { display: flex; gap: 8px; align-items: center; }
+  .grow { flex: 1; min-width: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip-add {
+    font-family: 'Press Start 2P', monospace; font-size: 8px; letter-spacing: 1px;
+    color: #efeaff; background: #2e2a44; border: 2px solid #000; padding: 8px 9px; cursor: pointer;
+    box-shadow: inset 2px 2px 0 #4a4770, inset -2px -3px 0 #151227;
+  }
+  .chip-add:hover { filter: brightness(1.25); }
+  .chip-add.active {
+    background: #3f6a1f; color: #fff;
+    box-shadow: inset 2px 2px 0 #a3e06a, inset -2px -3px 0 #274f13;
+  }
+  .obj {
+    display: flex; align-items: center; gap: 8px; padding: 6px 6px;
+    cursor: pointer; font-size: 17px; border: 2px solid transparent;
+  }
+  .obj:hover { background: #241d3a; }
+  .obj.sel { background: #2f2050; border: 2px solid #6a3ab5; box-shadow: inset 0 0 0 1px #000; }
+  .obj .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .empty { color: #6f6390; font-style: italic; padding: 4px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .hint-soft { color: #6f6390; font-size: 14px; margin-top: 6px; line-height: 1.4; }
+
+  footer {
+    margin-top: 40px; padding: 22px 18px 30px; text-align: center;
+    background:
+      linear-gradient(rgba(22, 18, 32, .96), rgba(22, 18, 32, .96)),
+      var(--px-dirt);
+    background-size: cover, 8px 8px;
+    border-top: 2px solid #000;
+    box-shadow: inset 0 3px 0 rgba(255,255,255,.06), 0 -4px 0 #4c8a2f;
+  }
+  footer .pix { font-size: 9px; color: #a3e06a; text-shadow: 2px 2px 0 #000; letter-spacing: 2px; margin-bottom: 8px; }
+  footer p { color: #8f87ad; font-size: 15px; }
+  .grass-strip { height: 6px; background: var(--px-grass); background-size: 10px 10px; border-top: 2px solid #000; border-bottom: 2px solid #000; image-rendering: pixelated; }
+
+  nav .nbadge {
+    display: inline-block; margin-left: 6px; min-width: 14px; text-align: center;
+    font-family: 'Press Start 2P', monospace; font-size: 7px; color: #fff;
+    background: #6a3ab5; border: 2px solid #000; padding: 2px 4px;
+    box-shadow: inset 1px 1px 0 #b28ae6, inset -1px -1px 0 #3d1f6e;
+  }
+  nav .navbtn {
+    font-family: 'Press Start 2P', monospace; font-size: 8px; letter-spacing: 1px;
+    color: #fff; text-decoration: none; text-shadow: 1px 1px 0 #000;
+    background: #3f6a1f; border: 2px solid #000; padding: 7px 9px;
+    box-shadow: inset 2px 2px 0 #a3e06a, inset -2px -3px 0 #274f13;
+  }
+  nav .navbtn:hover { filter: brightness(1.2); }
+  nav .navbtn + .navbtn { background: #6a3ab5; box-shadow: inset 2px 2px 0 #b28ae6, inset -2px -3px 0 #3d1f6e; }
+
+  .modal {
+    position: fixed; inset: 0; z-index: 40;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(8, 6, 14, .72);
+  }
+  .modal.open { display: flex; }
+  .modalbox {
+    width: min(620px, 92vw); max-height: 82vh;
+    background:
+      linear-gradient(rgba(24, 20, 36, .98), rgba(24, 20, 36, .98)),
+      var(--px-dirt);
+    background-size: cover, 8px 8px;
+    padding: 16px 16px 20px;
+    display: flex; flex-direction: column;
+  }
+  .modalhead { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .modalhead h2 {
+    flex: 1; font-family: 'Press Start 2P', monospace; font-size: 13px;
+    color: #d9ffe0; text-shadow: 3px 3px 0 #2f6a1c; letter-spacing: 1px;
+  }
+  .newslist { overflow-y: auto; padding-right: 4px; }
+  .news-item {
+    display: flex; gap: 12px; padding: 7px 6px; font-size: 18px;
+    border-bottom: 2px solid #000; box-shadow: 0 1px 0 #4a2a7a;
+  }
+  .news-item .ts {
+    flex: none; font-family: 'Press Start 2P', monospace; font-size: 8px;
+    color: #a3e06a; line-height: 1.5; padding-top: 3px;
+  }
+  .news-item .msg { color: #efeaff; }
+  .news-empty { color: #6f6390; font-style: italic; padding: 8px 0; }
+
+  @media (max-width: 760px) {
+    #panel { width: min(342px, 92vw); min-width: 220px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <span class="block"></span>
+    <span>PHANTOM CREATIONS</span>
+  </div>
+  <a href="#lab">3D Generator</a>
+  <a href="https://rodion86.github.io/minecraft-mods/">Mods</a>
+  <a href="#" id="newsLink">News<span class="nbadge" id="newsBadge">0</span></a>
+  <div class="spacer"></div>
+  <a class="navbtn" href="https://t.me/migodihvh" target="_blank" rel="noopener">migodi</a>
+  <a class="navbtn" href="https://t.me/macclient11" target="_blank" rel="noopener">don0s</a>
+  <span style="color:#6f6390; font-size:14px">v1.21.4</span>
+</nav>
+<div class="grass-strip"></div>
+
+<header class="hero">
+  <div class="topbar">
+    <div class="badge">&#9679; FEATURED MOD</div>
+    <div class="row">
+      <div class="icon mc-border"></div>
+      <div style="min-width:0">
+        <h1>3D MODEL PREVIEW</h1>
+        <div class="subtitle">fluffy purple neon 3D text &amp; shapes for Minecraft 1.21.4</div>
+        <div class="actions">
+          <button class="btn green" id="btnDownload">&#9660; Download / export art</button>
+          <button class="btn purple" id="btnOpenLab">&#9876; Open 3D generator</button>
+        </div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n">&#9733; 4.9</div><div class="l">rating (12k)</div></div>
+      <div class="stat"><div class="n">1 240 515</div><div class="l">downloads</div></div>
+      <div class="stat"><div class="n">64 KB</div><div class="l">client mod</div></div>
+    </div>
+  </div>
+</header>
+
+<main id="lab">
+  <div class="labhead">
+    <h2>PHANTOM STUDIO</h2>
+    <span class="y">LIVE EDITOR</span>
+    <span class="hint">menu on the right slides away on button &middot; drag its edge to resize &middot; drag = orbit</span>
+  </div>
+  <div class="labwrap" id="labwrap">
+    <div class="labbar">
+      <button class="winbtn" id="winClose" title="open / close menu">&#9776;</button>
+      <span class="zb"></span><span class="zc"></span>
+      <span class="title">PHANTOM STUDIO.EXE</span>
+      <span class="tip">click object = select &middot; drag = orbit</span>
+      <button class="winbtn fs" id="fsBtn" title="toggle fullscreen">&#9634;</button>
+    </div>
+    <div id="panel">
+      <div class="panelresize" id="panelResize" title="drag to resize"></div>
+      <h1 id="panelTitle">&#9776; PHANTOM STUDIO</h1>
+      <div class="hint-soft">fluffy purple material &middot; light from top-left</div>
+
+      <h2>ADD TEXT</h2>
+      <input type="text" id="newText" value="3D MODEL PREVIEW" placeholder="Your text...">
+      <div class="row" style="margin-top:10px">
+        <div class="grow">
+          <div class="grid2">
+            <div><label>Size</label><input type="number" id="newSize" value="1.0" step="0.1" min="0.1"></div>
+            <div><label>Depth</label><input type="number" id="newDepth" value="0.5" step="0.05" min="0.05"></div>
+          </div>
+        </div>
+        <button class="btn green" id="btnAddText">+ Text</button>
+      </div>
+
+      <h2>ADD SHAPE</h2>
+      <div class="chips" id="shapeChips"></div>
+
+      <h2>SCENE OBJECTS</h2>
+      <div id="list"></div>
+
+      <h2>SELECTED OBJECT</h2>
+      <div id="selPanel"></div>
+
+      <h2>LIGHT &amp; FX</h2>
+      <label>Light from</label>
+      <div class="chips" id="lightChips"></div>
+      <label>Effects</label>
+      <div class="chips" id="fxChips"></div>
+      <div class="grid2" style="margin-top:8px">
+        <div id="rimWrap"><label>Neon rim</label><input type="range" id="rimVal" min="0" max="1.5" step="0.05" value="0.6"></div>
+        <div id="shinyWrap"><label>Shine</label><input type="range" id="shinyVal" min="4" max="160" step="4" value="26"></div>
+      </div>
+      <label style="margin-top:6px">Light direction (XYZ)</label>
+      <div class="grid3" id="lightGrid"></div>
+      <div class="row" style="margin-top:10px">
+        <label style="margin:0"><input type="checkbox" id="autoRotate" checked> auto-rotate</label>
+      </div>
+
+      <h2>BACKGROUND</h2>
+      <div class="chips" id="bgChips"></div>
+      <div class="grid2" style="margin-top:8px">
+        <div><label>Color</label><input type="color" id="bgColor" value="#000000"></div>
+        <div id="shimmerWrap"><label>Shimmer speed</label><input type="range" id="shimmerVal" min="0" max="3" step="0.1" value="1"></div>
+      </div>
+      <label style="margin-top:6px">Or load your own photo</label>
+      <button class="chip-add" id="btnPhoto" style="width:100%">&#128444; Choose photo file</button>
+      <input type="file" id="photoInput" accept="image/*" style="display:none">
+
+      <div class="row" style="margin-top:16px">
+        <button class="btn green" id="btnExport" style="flex:1">Export PNG</button>
+        <button class="btn tiny danger" id="btnClear">Clear</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="modal" id="newsModal">
+  <div class="modalbox mc-border">
+    <div class="modalhead">
+      <h2>NEWS &bull; CHANGELOG</h2>
+      <button class="btn tiny" id="newsClose">&#10005;</button>
+    </div>
+    <div class="hint-soft" style="margin-bottom:10px">every change in the studio is logged here with its date and time</div>
+    <div id="newsList" class="newslist"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="pix">PHANTOM CREATIONS &bull; NOT AN OFFICIAL MOJANG PRODUCT</div>
+  <p>Minecraft is a trademark of Mojang Studios. Villagers are not paid for marketing testimonials.</p>
+</footer>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+  import * as THREE from 'three';
+  import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+  import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+  const labwrap = document.getElementById('labwrap');
+  const panelEl = document.getElementById('panel');
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
+  camera.position.set(0, 0, 9);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(0x000000);
+  labwrap.appendChild(renderer.domElement);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.6;
+  controls.enablePan = false;
+
+  const lightDir = new THREE.Vector3(-0.72, 1.0, 0.5).normalize();
+  const raycaster = new THREE.Raycaster();
+
+  const vertexShader = `
+    uniform float uTime;
+    uniform float uAnimSpeed;
+    uniform float uFurScale;
+    uniform float uFurHeight;
+    varying vec3 vNormal;
+    varying vec3 vWorldPos;
+    varying float vNoise;
+    varying vec3 vViewDir;
+
+    vec3 mod289(vec3 x){ return x - floor(x * (1.0/289.0)) * 289.0; }
+    vec4 mod289(vec4 x){ return x - floor(x * (1.0/289.0)) * 289.0; }
+    vec4 permute(vec4 x){ return mod289(((x*34.0)+1.0)*x); }
+    vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314*r; }
+
+    float snoise(vec3 v){
+      const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+      const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+      vec3 i  = floor(v + dot(v, C.yyy));
+      vec3 x0 = v - i + dot(i, C.xxx);
+      vec3 g  = step(x0.yzx, x0.xyz);
+      vec3 l  = 1.0 - g;
+      vec3 i1 = min(g.xyz, l.zxy);
+      vec3 i2 = max(g.xyz, l.zxy);
+      vec3 x1 = x0 - i1 + C.xxx;
+      vec3 x2 = x0 - i2 + C.yyy;
+      vec3 x3 = x0 - D.yyy;
+      i = mod289(i);
+      vec4 p = permute(permute(permute(
+                  i.z + vec4(0.0, i1.z, i2.z, 1.0))
+                + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+                + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+      float n_ = 0.142857142857;
+      vec3 ns = n_ * D.wyz - D.xzx;
+      vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+      vec4 x_ = floor(j * ns.z);
+      vec4 y_ = floor(j - 7.0 * x_);
+      vec4 x = x_ * ns.x + ns.yyyy;
+      vec4 y = y_ * ns.x + ns.yyyy;
+      vec4 h = 1.0 - abs(x) - abs(y);
+      vec4 b0 = vec4(x.xy, y.xy);
+      vec4 b1 = vec4(x.zw, y.zw);
+      vec4 s0 = floor(b0)*2.0 + 1.0;
+      vec4 s1 = floor(b1)*2.0 + 1.0;
+      vec4 sh = -step(h, vec4(0.0));
+      vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+      vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+      vec3 p0 = vec3(a0.xy, h.x);
+      vec3 p1 = vec3(a0.zw, h.y);
+      vec3 p2 = vec3(a1.xy, h.z);
+      vec3 p3 = vec3(a1.zw, h.w);
+      vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+      p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+      vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+      m = m * m;
+      return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+    }
+
+    float fbm(vec3 p){
+      float f = 0.0;
+      float a = 0.5;
+      for(int i = 0; i < 5; i++){
+        f += a * snoise(p);
+        p *= 2.02;
+        a *= 0.5;
+      }
+      return f;
+    }
+
+    void main(){
+      vNormal = normalize(normalMatrix * normal);
+      float n = fbm(position * uFurScale + uTime * uAnimSpeed * 0.18);
+      vec3 displaced = position + normal * n * uFurHeight;
+      vec4 worldPos = modelMatrix * vec4(displaced, 1.0);
+      vWorldPos = worldPos.xyz;
+      vNoise = n;
+      vViewDir = normalize(cameraPosition - vWorldPos);
+      gl_Position = projectionMatrix * viewMatrix * worldPos;
+    }
+  `;
+
+  const fragmentShader = `
+    uniform float uTime;
+    uniform vec3 uLightDir;
+    uniform vec3 uColorA;
+    uniform vec3 uColorB;
+    uniform vec3 uSpecColor;
+    uniform float uPulse;
+    uniform float uSpin;
+    uniform float uRim;
+    uniform float uShiny;
+    varying vec3 vNormal;
+    varying vec3 vWorldPos;
+    varying float vNoise;
+    varying vec3 vViewDir;
+
+    void main(){
+      vec3 N = normalize(vNormal);
+      float a = uTime * 0.35 * uSpin;
+      vec3 L = vec3(uLightDir.x*cos(a) + uLightDir.z*sin(a),
+                    uLightDir.y,
+                    -uLightDir.x*sin(a) + uLightDir.z*cos(a));
+      float ndl = clamp(dot(N, L), 0.0, 1.0);
+      float intensity = 1.0 - 0.3 * uPulse * (0.5 + 0.5 * sin(uTime * 4.0));
+      float fluff = smoothstep(-0.5, 0.85, vNoise);
+      vec3 base = mix(uColorB, uColorA, ndl);
+      base *= 0.55 + 0.5 * fluff;
+      vec3 color = (uColorB * 0.22 + base * ndl) * intensity;
+      vec3 halfVec = normalize(L + vViewDir);
+      float spec = pow(clamp(dot(N, halfVec), 0.0, 1.0), uShiny);
+      color += uSpecColor * spec * 0.85;
+      float rim = pow(1.0 - clamp(dot(N, vViewDir), 0.0, 1.0), 3.0);
+      color += uColorA * rim * uRim;
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  const PRIMITIVES = {
+    box:      { label: 'Box',     params: { a: 1.0, b: 1.0, c: 1.0 },
+                names: ['Width', 'Height', 'Depth'],
+                make: p => new THREE.BoxGeometry(p.a, p.b, p.c) },
+    sphere:   { label: 'Sphere',  params: { a: 0.7, b: 32,  c: 24 },
+                names: ['Radius', 'SegX', 'SegY'],
+                make: p => new THREE.SphereGeometry(p.a, p.b, p.c) },
+    cylinder: { label: 'Cyl',     params: { a: 0.5, b: 0.5, c: 1.0 },
+                names: ['TopR', 'BotR', 'Height'],
+                make: p => new THREE.CylinderGeometry(p.a, p.b, p.c, 32) },
+    cone:     { label: 'Cone',    params: { a: 0.7, b: 1.0, c: 32 },
+                names: ['Radius', 'Height', 'Seg'],
+                make: p => new THREE.ConeGeometry(p.a, p.b, p.c) },
+    torus:    { label: 'Torus',   params: { a: 0.8, b: 0.25, c: 64 },
+                names: ['Radius', 'Tube', 'Seg'],
+                make: p => new THREE.TorusGeometry(p.a, p.b, 16, p.c) },
+    capsule:  { label: 'Capsule', params: { a: 0.5, b: 1.0, c: 16 },
+                names: ['Radius', 'Length', 'Seg'],
+                make: p => new THREE.CapsuleGeometry(p.a, p.b, 8, p.c) }
+  };
+
+  let idSeq = 1;
+  const objects = [];
+  let selectedId = null;
+  let selHelper = null;
+  let font = null;
+
+  const CHANGES = loadChanges();
+  const lastLog = {};
+  function loadChanges() {
+    try { return JSON.parse(localStorage.getItem('phantomNews') || '[]'); }
+    catch (e) { return []; }
+  }
+  function saveChanges() {
+    try { localStorage.setItem('phantomNews', JSON.stringify(CHANGES.slice(0, 300))); } catch (e) {}
+  }
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  let initStarted = false;
+  function logChange(msg, key) {
+    if (!initStarted) return;
+    if (key) {
+      const now = Date.now();
+      if (lastLog[key] && now - lastLog[key] < 800) { lastLog[key] = now; return; }
+      lastLog[key] = now;
+    }
+    const d = new Date();
+    CHANGES.push({
+      date: pad2(d.getDate()) + '.' + pad2(d.getMonth() + 1) + '.' + d.getFullYear(),
+      time: pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds()),
+      msg
+    });
+    saveChanges();
+    renderNews();
+  }
+  function renderNews() {
+    const list = document.getElementById('newsList');
+    if (!list) return;
+    list.innerHTML = '';
+    document.getElementById('newsBadge').textContent = CHANGES.length;
+    if (!CHANGES.length) {
+      list.append(h('div', { class: 'news-empty' }, 'no changes recorded yet'));
+      return;
+    }
+    for (let i = CHANGES.length - 1; i >= 0; i--) {
+      const e = CHANGES[i];
+      list.append(h('div', { class: 'news-item' },
+        h('span', { class: 'ts' }, e.date + ' ' + e.time),
+        h('span', { class: 'msg' }, e.msg)
+      ));
+    }
+  }
+  function openNews() { document.getElementById('newsModal').classList.add('open'); renderNews(); }
+  function closeNews() { document.getElementById('newsModal').classList.remove('open'); }
+  document.getElementById('newsLink').addEventListener('click', e => { e.preventDefault(); openNews(); });
+  document.getElementById('newsClose').addEventListener('click', closeNews);
+  document.getElementById('newsModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeNews();
+  });
+
+  const FX = { pulse: false, spin: false };
+  let fxRim = 0.6, fxShiny = 26;
+
+  const DEFAULT_MAT = {
+    furScale: 1.15, furHeight: 0.16, anim: 1.0,
+    colorA: '#d48bff', colorB: '#4a1a7a', spec: '#ffd9ff'
+  };
+
+  function makeMaterial(p) {
+    const m = new THREE.ShaderMaterial({
+      vertexShader, fragmentShader,
+      uniforms: {
+        uTime:      { value: 0 },
+        uAnimSpeed: { value: p.anim },
+        uFurScale:  { value: p.furScale },
+        uFurHeight: { value: p.furHeight },
+        uLightDir:  { value: lightDir.clone() },
+        uColorA:    { value: new THREE.Color(p.colorA) },
+        uColorB:    { value: new THREE.Color(p.colorB) },
+        uSpecColor: { value: new THREE.Color(p.spec) },
+        uPulse:     { value: 0 },
+        uSpin:      { value: 0 },
+        uRim:       { value: fxRim },
+        uShiny:     { value: fxShiny }
+      }
+    });
+    return m;
+  }
+
+  function applyMat(o) {
+    const u = o.material.uniforms;
+    u.uFurScale.value = o.p.furScale;
+    u.uFurHeight.value = o.p.furHeight;
+    u.uAnimSpeed.value = o.p.anim;
+    u.uColorA.value.set(o.p.colorA);
+    u.uColorB.value.set(o.p.colorB);
+    u.uSpecColor.value.set(o.p.spec);
+    u.uLightDir.value.copy(lightDir);
+  }
+
+  function applyEffectsAll() {
+    for (const o of objects) {
+      const u = o.material.uniforms;
+      u.uPulse.value = FX.pulse ? 1 : 0;
+      u.uSpin.value = FX.spin ? 1 : 0;
+      u.uRim.value = fxRim;
+      u.uShiny.value = fxShiny;
+      u.uLightDir.value.copy(lightDir);
+    }
+  }
+
+  function buildGeometry(o) {
+    if (o.geom.type === 'text') {
+      const g = new TextGeometry(o.geom.def.text, {
+        font, size: o.geom.def.size, height: o.geom.def.depth,
+        curveSegments: 12,
+        bevelEnabled: true, bevelThickness: 0.035, bevelSize: 0.03, bevelSegments: 6
+      });
+      g.computeVertexNormals();
+      g.center();
+      return g;
+    }
+    return PRIMITIVES[o.geom.type].make(o.geom.def.params);
+  }
+
+  function rebuild(o) {
+    if (o.mesh.geometry) o.mesh.geometry.dispose();
+    o.mesh.geometry = buildGeometry(o);
+    updateHelper();
+  }
+
+  function addObject(kind, geom, name, p) {
+    const id = idSeq++;
+    const material = makeMaterial(p);
+    const mesh = new THREE.Mesh(buildGeometry({ geom }), material);
+    mesh.userData.id = id;
+    scene.add(mesh);
+    const rec = { id, kind, name, mesh, material, geom, p: { ...DEFAULT_MAT, ...p } };
+    objects.push(rec);
+    applyMat(rec);
+    renderList();
+    select(id);
+    return rec;
+  }
+
+  function addTextRow(text, size, depth) {
+    const p = { ...DEFAULT_MAT };
+    addObject('text', { type: 'text', def: { text, size, depth } }, text.slice(0, 24), p);
+  }
+
+  function addPrimRow(kind) {
+    const def = PRIMITIVES[kind];
+    const params = { ...def.params };
+    const p = { ...DEFAULT_MAT };
+    logChange('Added shape: ' + def.label);
+    addObject(kind, { type: kind, def: { params } }, def.label.toLowerCase(), p);
+  }
+
+  function byId() { return objects.find(o => o.id === selectedId); }
+
+  function select(id) {
+    selectedId = id;
+    updateHelper();
+    renderList();
+    renderSelPanel();
+  }
+
+  function updateHelper() {
+    if (selHelper) { scene.remove(selHelper); selHelper = null; }
+    const o = byId();
+    if (o) {
+      selHelper = new THREE.BoxHelper(o.mesh, 0xffffff);
+      scene.add(selHelper);
+    }
+  }
+
+  function removeObject(id) {
+    const i = objects.findIndex(o => o.id === id);
+    if (i < 0) return;
+    const o = objects[i];
+    scene.remove(o.mesh);
+    o.mesh.geometry.dispose();
+    o.material.dispose();
+    objects.splice(i, 1);
+    if (selectedId === id) selectedId = null;
+    logChange('Deleted: ' + o.name);
+    renderList();
+    renderSelPanel();
+    updateHelper();
+  }
+
+  function duplicate(id) {
+    const o = objects.find(x => x.id === id);
+    if (!o) return;
+    const rec = addObject(o.kind, {
+      type: o.geom.type,
+      def: o.geom.type === 'text'
+        ? { ...o.geom.def }
+        : { params: { ...o.geom.def.params } }
+    }, o.name, { ...o.p });
+    rec.mesh.position.copy(o.mesh.position).add(new THREE.Vector3(0.6, 0, 0.6));
+    rec.mesh.rotation.copy(o.mesh.rotation);
+    rec.mesh.scale.copy(o.mesh.scale);
+    rec.name = o.name + ' copy';
+    logChange('Duplicated: ' + o.name);
+    renderList();
+    select(rec.id);
+  }
+
+  function h(tag, attrs = {}, ...children) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'class') e.className = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else if (k === 'value' && (tag === 'input' || tag === 'textarea')) e.value = v;
+      else e.setAttribute(k, v);
+    }
+    for (const c of children) e.append(typeof c === 'string' ? document.createTextNode(c) : c);
+    return e;
+  }
+
+  function numField(labelText, value, step, onInput) {
+    const input = h('input', { type: 'number', step, value });
+    input.addEventListener('input', () => onInput(parseFloat(input.value)));
+    input.addEventListener('change', () => onInput(parseFloat(input.value)));
+    return h('div', {}, h('label', {}, labelText), input);
+  }
+
+  function renderList() {
+    const list = document.getElementById('list');
+    list.innerHTML = '';
+    if (!objects.length) {
+      list.append(h('div', { class: 'empty' }, 'no objects yet - add text or a shape'));
+      return;
+    }
+    for (const o of objects) {
+      const row = h('div', { class: 'obj' + (o.id === selectedId ? ' sel' : '') },
+        h('span', { class: 'name', title: o.name }, '[' + o.kind + '] ' + o.name),
+        h('button', { class: 'btn tiny', onclick: () => select(o.id) }, 'sel'),
+        h('button', { class: 'btn tiny', onclick: () => duplicate(o.id) }, 'dup'),
+        h('button', { class: 'btn tiny danger', onclick: () => removeObject(o.id) }, 'del')
+      );
+      list.append(row);
+    }
+  }
+
+  function renderSelPanel() {
+    const panel = document.getElementById('selPanel');
+    panel.innerHTML = '';
+    const o = byId();
+    if (!o) {
+      panel.append(h('div', { class: 'empty' }, 'select an object to edit'));
+      return;
+    }
+
+    const t = comp => {
+      const i = h('input', { type: 'number', step: 0.1, value: THREE.MathUtils.radToDeg(o.mesh.rotation[comp]) });
+      i.addEventListener('input', () => {
+        const v = THREE.MathUtils.degToRad(parseFloat(i.value) || 0);
+        o.mesh.rotation[comp] = v;
+        logChange('Rotated: ' + o.name, 'rot' + o.id);
+      });
+      return i;
+    };
+
+    const pVal = (comp) => {
+      const i = h('input', { type: 'number', step: 0.1, value: o.mesh.position[comp] });
+      i.addEventListener('input', () => {
+        o.mesh.position[comp] = parseFloat(i.value) || 0;
+        logChange('Moved: ' + o.name, 'pos' + o.id);
+      });
+      return i;
+    };
+
+    const sVal = (comp) => {
+      const i = h('input', { type: 'number', step: 0.1, value: o.mesh.scale[comp] });
+      i.addEventListener('input', () => {
+        o.mesh.scale[comp] = parseFloat(i.value) || 0.001;
+        logChange('Scaled: ' + o.name, 'scl' + o.id);
+      });
+      return i;
+    };
+
+    const matRange = (label, key, min, max, step) => {
+      const i = h('input', { type: 'range', min, max, step, value: o.p[key] });
+      i.addEventListener('input', () => {
+        o.p[key] = parseFloat(i.value); applyMat(o);
+        logChange('Material tweak: ' + label + ' on ' + o.name, 'mat' + o.id);
+      });
+      return h('div', {}, h('label', {}, label + ' &rarr; ' + +o.p[key].toFixed(2)), i);
+    };
+
+    const colorField = (label, key) => {
+      const i = h('input', { type: 'color', value: o.p[key] });
+      i.addEventListener('input', () => {
+        o.p[key] = i.value; applyMat(o);
+        logChange('Color: ' + label + ' on ' + o.name, 'col' + o.id + key);
+      });
+      return h('div', {}, h('label', {}, label), i);
+    };
+
+    const name = h('input', { type: 'text', value: o.name });
+    name.addEventListener('change', () => { o.name = name.value; renderList(); logChange('Renamed to: ' + o.name); });
+
+    panel.append(h('label', {}, 'Name'), name);
+
+    panel.append(h('h2', { style: 'margin-top:10px' }, 'TRANSFORM'));
+    panel.append(h('div', { class: 'grid3' },
+      h('div', {}, h('label', {}, 'Pos X'), pVal('x')),
+      h('div', {}, h('label', {}, 'Pos Y'), pVal('y')),
+      h('div', {}, h('label', {}, 'Pos Z'), pVal('z'))
+    ));
+    panel.append(h('div', { class: 'grid3', style: 'margin-top:8px' },
+      h('div', {}, h('label', {}, 'Rot X'), t('x')),
+      h('div', {}, h('label', {}, 'Rot Y'), t('y')),
+      h('div', {}, h('label', {}, 'Rot Z'), t('z'))
+    ));
+    panel.append(h('div', { class: 'grid3', style: 'margin-top:8px' },
+      h('div', {}, h('label', {}, 'Scl X'), sVal('x')),
+      h('div', {}, h('label', {}, 'Scl Y'), sVal('y')),
+      h('div', {}, h('label', {}, 'Scl Z'), sVal('z'))
+    ));
+
+    if (o.geom.type === 'text') {
+      panel.append(h('h2', { style: 'margin-top:12px' }, 'TEXT'));
+      const ti = h('input', { type: 'text', value: o.geom.def.text });
+      ti.addEventListener('input', () => { o.geom.def.text = ti.value; o.name = ti.value.slice(0, 24); rebuild(o); renderList(); });
+      ti.addEventListener('change', () => logChange('Text changed to: \u00AB' + o.geom.def.text + '\u00BB'));
+      panel.append(h('label', {}, 'Content'), ti);
+      panel.append(h('div', { class: 'grid2', style: 'margin-top:6px' },
+        numField('Size', o.geom.def.size, 0.1, v => { o.geom.def.size = v; rebuild(o); logChange('Text size changed', 'ts' + o.id); }),
+        numField('Depth', o.geom.def.depth, 0.05, v => { o.geom.def.depth = v; rebuild(o); logChange('Text depth changed', 'td' + o.id); })
+      ));
+    } else {
+      panel.append(h('h2', { style: 'margin-top:12px' }, PRIMITIVES[o.geom.type].label.toUpperCase() + ' SIZE'));
+      const def = PRIMITIVES[o.geom.type];
+      panel.append(h('div', { class: 'grid3' },
+        numField(def.names[0], o.geom.def.params.a, 0.05, v => { o.geom.def.params.a = v; rebuild(o); logChange('Resized: ' + o.name, 'gd' + o.id); }),
+        numField(def.names[1], o.geom.def.params.b, 0.05, v => { o.geom.def.params.b = v; rebuild(o); logChange('Resized: ' + o.name, 'gd' + o.id); }),
+        numField(def.names[2], o.geom.def.params.c, 1, v => { o.geom.def.params.c = Math.max(1, v); rebuild(o); logChange('Resized: ' + o.name, 'gd' + o.id); })
+      ));
+    }
+
+    panel.append(h('h2', { style: 'margin-top:12px' }, 'FLUFFY MATERIAL'));
+    panel.append(matRange('Fur scale', 'furScale', 0.1, 3, 0.05));
+    panel.append(matRange('Fur height', 'furHeight', 0, 0.8, 0.01));
+    panel.append(matRange('Fur animation', 'anim', 0, 3, 0.1));
+    panel.append(h('div', { class: 'grid3', style: 'margin-top:8px' },
+      colorField('Light purple', 'colorA'),
+      colorField('Deep purple', 'colorB'),
+      colorField('Specular', 'spec')
+    ));
+  }
+
+  document.getElementById('shapeChips').append(
+    ...Object.keys(PRIMITIVES).map(k =>
+      h('button', { class: 'chip-add', onclick: () => addPrimRow(k) }, PRIMITIVES[k].label))
+  );
+
+  document.getElementById('btnAddText').addEventListener('click', () => {
+    const text = document.getElementById('newText').value || 'Hello';
+    const size = parseFloat(document.getElementById('newSize').value) || 1;
+    const depth = parseFloat(document.getElementById('newDepth').value) || 0.5;
+    logChange('Added text: \u00AB' + text + '\u00BB');
+    addTextRow(text, size, depth);
+  });
+  document.getElementById('newText').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('btnAddText').click();
+  });
+
+  document.getElementById('btnExport').addEventListener('click', () => {
+    renderer.render(scene, camera);
+    const a = document.createElement('a');
+    a.href = renderer.domElement.toDataURL('image/png');
+    a.download = '3d-preview.png';
+    a.click();
+    logChange('Exported PNG screenshot');
+  });
+
+  document.getElementById('btnDownload').addEventListener('click', () => {
+    document.getElementById('btnExport').click();
+  });
+
+  document.getElementById('btnOpenLab').addEventListener('click', () => {
+    document.getElementById('lab').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.getElementById('btnClear').addEventListener('click', () => {
+    if (!objects.length) return;
+    if (confirm('Delete all objects from the scene?')) {
+      logChange('Cleared scene (' + objects.length + ' objects)');
+      while (objects.length) removeObject(objects[0].id);
+    }
+  });
+
+  document.getElementById('autoRotate').addEventListener('change', e => {
+    controls.autoRotate = e.target.checked;
+  });
+
+  const lightChips = document.getElementById('lightChips');
+  const LIGHT_PRESETS = {
+    'Top-L': [-0.72, 1.0, 0.5],
+    'Top-R': [0.72, 1.0, 0.5],
+    'Front': [0, 0, 1],
+    'Back':  [0, 0, -1],
+    'Top':   [0, 1, 0],
+    'Bottom':[0, -1, 0]
+  };
+  const lightBtn = {};
+  function setLight(v) {
+    lightDir.copy(v).normalize();
+    for (const o of objects) o.material.uniforms.uLightDir.value.copy(lightDir);
+    syncLightSliders();
+    logChange('Light preset: ' + (currentLightName || v.toArray().map(n => +n.toFixed(2)).join(', ')));
+  }
+  let currentLightName = null;
+  for (const [name, arr] of Object.entries(LIGHT_PRESETS)) {
+    const b = h('button', { class: 'chip-add', onclick: () => {
+      for (const k of Object.keys(lightBtn)) lightBtn[k].classList.remove('active');
+      b.classList.add('active');
+      currentLightName = name;
+      setLight(new THREE.Vector3(...arr));
+    } }, name);
+    lightBtn[name] = b;
+    lightChips.append(b);
+  }
+
+  const lightGrid = document.getElementById('lightGrid');
+  const lightSliders = {};
+  const lightLabels = {};
+  ['x', 'y', 'z'].forEach(comp => {
+    const input = h('input', { type: 'range', min: -1, max: 1, step: 0.05, value: lightDir[comp] });
+    const labelEl = document.createElement('label');
+    input.addEventListener('input', () => {
+      lightDir.setComponent(comp, parseFloat(input.value));
+      lightDir.normalize();
+      for (const o of objects) o.material.uniforms.uLightDir.value.copy(lightDir);
+      labelEl.textContent = comp + ' ' + lightDir[comp].toFixed(2);
+      logChange('Light direction: ' + lightDir.toArray().map(n => +n.toFixed(2)).join(', '), 'lum');
+    });
+    labelEl.textContent = comp + ' ' + lightDir[comp].toFixed(2);
+    lightSliders[comp] = input;
+    lightLabels[comp] = labelEl;
+    lightGrid.append(h('div', {}, labelEl, input));
+  });
+  function syncLightSliders() {
+    for (const c of ['x', 'y', 'z']) {
+      lightSliders[c].value = lightDir[c];
+      lightLabels[c].textContent = c + ' ' + lightDir[c].toFixed(2);
+    }
+  }
+  lightBtn['Top-L'].classList.add('active');
+
+  const fxChips = document.getElementById('fxChips');
+  const fxBtn = {};
+  function toggleFx(name, key) {
+    FX[key] = !FX[key];
+    fxBtn[name].classList.toggle('active');
+    applyEffectsAll();
+    logChange('Effect ' + (FX[key] ? 'ON: ' : 'OFF: ') + name);
+  }
+  ['Pulse', 'Orbit light'].forEach((name, i) => {
+    const key = i === 0 ? 'pulse' : 'spin';
+    const b = h('button', { class: 'chip-add', onclick: () => toggleFx(name, key) }, name);
+    fxBtn[name] = b;
+    fxChips.append(b);
+  });
+
+  document.getElementById('rimVal').addEventListener('input', e => {
+    fxRim = parseFloat(e.target.value);
+    applyEffectsAll();
+    logChange('Neon rim: ' + fxRim.toFixed(2), 'rim');
+  });
+  document.getElementById('shinyVal').addEventListener('input', e => {
+    fxShiny = parseFloat(e.target.value);
+    applyEffectsAll();
+    logChange('Shine: ' + fxShiny, 'shy');
+  });
+
+  let bgMode = 'shimmer';
+  const bgChips = document.getElementById('bgChips');
+  const bgBtn = {};
+  const SIMG = 512;
+  const shimmerCanvas = document.createElement('canvas');
+  shimmerCanvas.width = shimmerCanvas.height = SIMG;
+  const shimmerCtx = shimmerCanvas.getContext('2d');
+  const shimmerTex = new THREE.CanvasTexture(shimmerCanvas);
+  shimmerTex.colorSpace = THREE.SRGBColorSpace;
+
+  const photoCanvas = document.createElement('canvas');
+  photoCanvas.width = photoCanvas.height = SIMG;
+  const photoCtx = photoCanvas.getContext('2d');
+  const photoTex = new THREE.CanvasTexture(photoCanvas);
+  photoTex.colorSpace = THREE.SRGBColorSpace;
+
+  const bgMat = new THREE.MeshBasicMaterial({
+    color: 0x000000, map: shimmerTex, depthWrite: false, side: THREE.DoubleSide
+  });
+  const bgPlane = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), bgMat);
+  bgPlane.position.set(0, 0, -28);
+  bgPlane.renderOrder = -10;
+  bgPlane.frustumCulled = false;
+  camera.add(bgPlane);
+  scene.add(camera);
+
+  function coverDraw(ctx, img) {
+    const s = Math.max(SIMG / img.naturalWidth, SIMG / img.naturalHeight);
+    const w = img.naturalWidth * s, h = img.naturalHeight * s;
+    ctx.drawImage(img, (SIMG - w) / 2, (SIMG - h) / 2, w, h);
+  }
+
+  document.getElementById('btnPhoto').addEventListener('click', () => {
+    document.getElementById('photoInput').click();
+  });
+  document.getElementById('photoInput').addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      photoCtx.fillStyle = '#000'; photoCtx.fillRect(0, 0, SIMG, SIMG);
+      coverDraw(photoCtx, img);
+      photoTex.needsUpdate = true;
+      setBgMode('photo');
+      photoTex.minFilter = THREE.LinearFilter;
+    };
+    img.src = URL.createObjectURL(file);
+  });
+
+  function setBgMode(mode) {
+    bgMode = mode;
+    for (const k of Object.keys(bgBtn)) bgBtn[k].classList.toggle('active', k === mode);
+    document.getElementById('shimmerWrap').style.opacity = mode === 'shimmer' ? 1 : 0.35;
+    if (mode === 'color') {
+      bgMat.map = null;
+      bgMat.color.set(document.getElementById('bgColor').value);
+    } else if (mode === 'shimmer') {
+      bgMat.map = shimmerTex;
+      shimmerTex.needsUpdate = true;
+    } else {
+      bgMat.map = photoTex;
+      photoTex.needsUpdate = true;
+    }
+    bgMat.needsUpdate = true;
+    logChange('Background mode: ' + mode);
+  }
+  for (const mode of ['shimmer', 'color', 'photo']) {
+    const b = h('button', { class: 'chip-add', onclick: () => setBgMode(mode) },
+      mode === 'photo' ? 'Photo file' : mode[0].toUpperCase() + mode.slice(1));
+    bgBtn[mode] = b;
+    bgChips.append(b);
+  }
+  setBgMode('shimmer');
+  initStarted = true;
+
+  document.getElementById('bgColor').addEventListener('input', e => {
+    if (bgMode === 'color') bgMat.color.set(e.target.value);
+    logChange('Background color: ' + e.target.value, 'bgc');
+  });
+  let shimmerSpeed = 1;
+  document.getElementById('shimmerVal').addEventListener('input', e => {
+    shimmerSpeed = parseFloat(e.target.value);
+    logChange('Shimmer speed: ' + shimmerSpeed.toFixed(1), 'shm');
+  });
+
+  const fsBtn = document.getElementById('fsBtn');
+  fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      labwrap.requestFullscreen && labwrap.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen && document.exitFullscreen();
+    }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    fsBtn.textContent = document.fullscreenElement ? '\u2715' : '\u25A2';
+  });
+
+  document.getElementById('winClose').addEventListener('click', () => {
+    panelEl.classList.toggle('hidden');
+  });
+
+  let pnlW = 342;
+  function clampPanelW() {
+    const w = labwrap.clientWidth;
+    pnlW = Math.max(260, Math.min(pnlW, w - 40));
+  }
+  function applyPanelWidth() {
+    panelEl.style.width = pnlW + 'px';
+  }
+  function initPanelWidth() {
+    pnlW = Math.min(342, Math.max(260, labwrap.clientWidth * 0.3));
+    clampPanelW();
+    applyPanelWidth();
+  }
+
+  const panelResize = document.getElementById('panelResize');
+  let drag = null;
+  panelResize.addEventListener('pointerdown', e => {
+    drag = { dx: e.clientX, startW: pnlW };
+    panelResize.setPointerCapture(e.pointerId);
+  });
+  panelResize.addEventListener('pointermove', e => {
+    if (!drag || drag.startW === undefined) return;
+    pnlW = drag.startW - (e.clientX - drag.dx);
+    clampPanelW();
+    applyPanelWidth();
+  });
+  panelResize.addEventListener('pointerup', () => { drag = null; });
+  panelResize.addEventListener('pointercancel', () => { drag = null; });
+
+  initPanelWidth();
+  addEventListener('resize', () => { clampPanelW(); applyPanelWidth(); });
+
+  let downX = 0, downY = 0;
+  renderer.domElement.addEventListener('pointerdown', e => {
+    downX = e.clientX; downY = e.clientY;
+  });
+  renderer.domElement.addEventListener('pointerup', e => {
+    if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) return;
+    const rect = renderer.domElement.getBoundingClientRect();
+    const ndc = new THREE.Vector2(
+      ((e.clientX - rect.left) / rect.width) * 2 - 1,
+      -((e.clientY - rect.top) / rect.height) * 2 + 1
+    );
+    raycaster.setFromCamera(ndc, camera);
+    const hits = raycaster.intersectObjects(objects.map(o => o.mesh), false);
+    if (hits.length) select(hits[0].object.userData.id);
+    else select(null);
+  });
+
+  function fitCanvas() {
+    const r = labwrap.getBoundingClientRect();
+    renderer.setSize(r.width, r.height, false);
+    camera.aspect = r.width / r.height;
+    camera.updateProjectionMatrix();
+    bgPlane.scale.x = (r.width / r.height) || 1;
+  }
+  const ro = new ResizeObserver(fitCanvas);
+  ro.observe(labwrap);
+  fitCanvas();
+
+  const clock = new THREE.Clock();
+  function drawShimmer() {
+    if (bgMode !== 'shimmer') return;
+    const now = performance.now();
+    const hue = (now * (0.02 * (0.4 + shimmerSpeed))) % 360;
+    const g = shimmerCtx.createLinearGradient(0, 0, SIMG, SIMG);
+    g.addColorStop(0.0, `hsl(${hue}, 75%, 60%)`);
+    g.addColorStop(0.5, `hsl(${(hue + 70) % 360}, 80%, 35%)`);
+    g.addColorStop(1.0, `hsl(${(hue + 150) % 360}, 75%, 18%)`);
+    shimmerCtx.fillStyle = g;
+    shimmerCtx.fillRect(0, 0, SIMG, SIMG);
+    shimmerTex.needsUpdate = true;
+  }
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+    for (const o of objects) {
+      o.material.uniforms.uTime.value = t;
+    }
+    drawShimmer();
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  addEventListener('resize', fitCanvas);
+
+  const loader = new FontLoader();
+  loader.load(
+    'https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json',
+    f => {
+      font = f;
+      addTextRow('3D MODEL PREVIEW', 1.0, 0.5);
+    },
+    undefined,
+    () => alert('Failed to load 3D font - check your internet connection.')
+  );
+</script>
+</body>
+</html>
